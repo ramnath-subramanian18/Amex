@@ -30,3 +30,4 @@ for match in date_matches:
     
     print(f"Date: {date}, Amount: {amount},Text:{text[start_position:amount_match_end]}")
     # print(start_position)
+    # print(amount_match_end)
