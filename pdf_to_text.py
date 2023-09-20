@@ -9,11 +9,19 @@ text = page.extract_text()
 print(text)
 
 
-date_strings = re.findall(r'\d{2}/\d{2}/\d{2}', text)
-pattern_amount = r'\d{2}/\d{2}/\d{2}.*?(\$\d+\.\d{2})'
-pattern_line = r'\d{2}/\d{2}/\d{2}.*?(?=\n|$)'
-matches_amount = re.findall(pattern_amount, text, re.DOTALL)# match new line char as well
-matches_line = re.findall(pattern_line, text)
-print((date_strings))
-print((matches_amount))
-print(matches_line)
+date_patterns = re.finditer(r"\d\d\/\d\d\/\d\d", text)
+for dates in date_patterns:
+  start_date=dates.start()
+  date=dates.group(0)
+  start = dates.start()
+  t=text[start:]
+  match_dollar = re.search(r".*.\$\d{1,3}(?:,\d{3})*\.\d+", t)
+  if match_dollar:
+    start_pos = start+match_dollar.end()
+    re.search(r".*.\$\d{1,3}(?:,\d{3})*\.\d+", t)
+    matched_text = match_dollar.group(0)
+    detailed_text=(text[start:start_pos])
+    price=(re.findall(".\$\d{1,3}(?:,\d{3})*\.\d+",match_dollar.group(0)))
+  else:
+    print("No match found")
+  print(f"Date: {date}, Detailed_text: {detailed_text}, Price: {price[0]}")
