@@ -1,0 +1,43 @@
+[MASTER]
+
+# Specify the maximum number of characters per line (default: 100)
+max-line-length = 120
+
+# Disable some error messages that you may find unnecessary
+disable = C0114,C0115,C0116
+
+[MESSAGES CONTROL]
+
+# Enable or disable specific messages
+# E: Error, W: Warning, C: Convention, R: Refactoring
+enable = F,E,W,C,R
+
+[BASIC]
+
+# Specify the maximum number of arguments for functions/methods (default: 5)
+max-args = 6
+
+# Specify the maximum number of local variables for functions/methods (default: 15)
+max-locals = 20
+
+# Specify the maximum number of return statements for functions/methods (default: 6)
+max-returns = 7
+
+[FORMAT]
+
+# Use single quotes for string literals (default: no)
+single-quotes = true
+
+# Use double quotes for docstrings (default: no)
+docstring-double-quotes = true
+
+[TYPECHECK]
+
+# Enable type hint checking (requires Python 3.5+)
+# type-checking = yes
+
+[REFACTORING]
+
+# Enable some refactoring checks
+# include-naming-hint = yes
+# import-graph = yes
