@@ -4,11 +4,19 @@ import re
 from amex import Amex
 from deserve import Deserve
 from discover import Discover
+from apple_card import AppleCard
+import sys
+sys.path.append("../utils")
 
+# from ..utils import get_card
+# import sys
+# sys.path.append("../utils")
+
+# import utils
 
 class CardFactory:
     
-    _card_name_pattern = re.compile(r'(Deserve|AmericanExpress|Discover|)', re.IGNORECASE)
+    _card_name_pattern = re.compile(r'(Deserve|AmericanExpress|Discover|Apple Card Customer)', re.IGNORECASE)
 
     def get_card(self, type):
         if type.casefold() == "AmericanExpress".casefold():
@@ -17,6 +25,8 @@ class CardFactory:
             return Deserve()
         elif type.casefold() == "Discover".casefold():
             return Discover()
+        elif type.casefold() == "Apple Card Customer".casefold():
+            return AppleCard()
         else:
             None
     
@@ -27,7 +37,8 @@ class CardFactory:
             with pdfplumber.open(file) as pdf_file:
                 text = pdf_file.pages[0].extract_text()
                 card_names = self._card_name_pattern.findall(text)
-                # remove duplicates after filtering
+                print(card_names)
+                # remove duplicates and empty string after filtering
                 card_names = list(set([s.lower() for s in card_names if s != ""]))
                 return card_names[0]
         else:
