@@ -7,4 +7,4 @@ reader = PdfReader('example2.pdf')
 page = reader.pages[2]
 text = page.extract_text()
 print(text)
-
+print("hello")
