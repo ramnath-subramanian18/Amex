@@ -8,7 +8,8 @@ page = reader.pages[3]
 text = page.extract_text()
 print(text)
 
-
+print("hello")
 date_patterns = re.finditer(r"\d\d\/\d\d\/\d\d", text)
 
 
+print("ram")
