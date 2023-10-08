@@ -37,7 +37,6 @@ class CardFactory:
             with pdfplumber.open(file) as pdf_file:
                 text = pdf_file.pages[0].extract_text()
                 card_names = self._card_name_pattern.findall(text)
-                print(card_names)
                 # remove duplicates and empty string after filtering
                 card_names = list(set([s.lower() for s in card_names if s != ""]))
                 return card_names[0]
