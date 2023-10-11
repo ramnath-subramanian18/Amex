@@ -41,8 +41,6 @@ class Amex(CardInterface):
                 break
         date_lst=date.split('/')        
         file_name = "amex"+date_lst[0]+'_'+date_lst[1]+'_'+date_lst[2]+".csv"
-        print(type(file_name))
-        print(file_name)
         csv_write(file_name,[["Date","Details","amount","Currency"]],'w')
         csv_write(file_name,data,'a')
                 
