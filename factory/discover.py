@@ -3,6 +3,7 @@ from PyPDF2 import PdfReader
 import datefinder
 import re
 from dateutil.parser import parse
+from database import insert_data
 from utils.csv_utils import csv_write
 from card_interface import CardInterface
 import csv
@@ -15,7 +16,7 @@ class Discover(CardInterface):
     dollar_pattern_exp = re.compile(r'.*.\$\d{1,3}(?:,\d{3})*\.\d+', re.IGNORECASE)
     price_pattern_exp = re.compile(r'.\$\d{1,3}(?:,\d{3})*\.\d+', re.IGNORECASE)
     
-    def extract_table(self, pdf_file):
+    def extract_table(self, pdf_file,userid,file_name_pdf):
         reader = PdfReader(pdf_file)
         page = reader.pages[0]
         text = page.extract_text()
@@ -39,13 +40,21 @@ class Discover(CardInterface):
                 detailed_text1=(text[end_date_pos:end_date_pos+price.start()])
                 final_price=(price.group(0))
                 if(start_year==end_year):
-                    data.append([date+'/'+start_year,detailed_text1.split('\n')[0],final_price,"USD"])
+                    lst={"Date":date+'/'+start_year,"Details":detailed_text1.split('\n')[0],"Amount":final_price,"Currency":"USD","Userid":userid,"Deleted":0,'FilenameUserId':file_name_pdf}
+                    # data.append([date+'/'+start_year,detailed_text1.split('\n')[0],final_price,"USD"])
+                    data.append(lst)
                 else:
                     if(date[0:2]=='01'):
-                        data.append([date+'/'+end_year,detailed_text1.split('\n')[0],final_price,"USD"])
+                        lst={"Date":date+'/'+end_year,"Details":detailed_text1.split('\n')[0],"Amount":final_price,"Currency":"USD","Userid":userid,"Deleted":0,'FilenameUserId':file_name_pdf}
+                        data.append(lst)
+                        #data.append([date+'/'+end_year,detailed_text1.split('\n')[0],final_price,"USD"])
                     else:
-                        data.append([date+'/'+start_year,detailed_text1.split('\n')[0],final_price,"USD"])
+                        lst={"Date":date+'/'+start_year,"Details":detailed_text1.split('\n')[0],"Amount":final_price,"Currency":"USD","Userid":userid,"Deleted":0,'FilenameUserId':file_name_pdf}
+                        data.append(lst)
+                        # data.append([date+'/'+start_year,detailed_text1.split('\n')[0],final_price,"USD"])
         date_lst=date.split('/') 
         file_name = "discover"+date_lst[0]+'_'+date_lst[1]+'_'+start_year+".csv"
         csv_write(file_name,[["Date","Details","amount","Currency"]],'w')
         csv_write(file_name,data,'a')
+        insert_data(data,file_name_pdf)
+        return data
