@@ -13,6 +13,7 @@ with open(file_name, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerows([["Date","Details","amount","Currency"]])
 
+
 for i in range(1,8):
     page = reader.pages[i]
     text = page.extract_text()
