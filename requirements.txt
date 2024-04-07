@@ -1,0 +1,7 @@
+datefinder==0.7.3
+Flask==2.2.2
+Flask_Cors==4.0.0
+pdfplumber==0.10.2
+pymongo==4.6.3
+PyPDF2==3.0.1
+python_dateutil==2.8.2

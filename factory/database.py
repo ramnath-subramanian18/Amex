@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 client=MongoClient()
 import pymongo
 import ssl
-client=pymongo.MongoClient('mongodb+srv://ramnath1:ramnath1@cluster0.agxnajm.mongodb.net/',ssl=True,ssl_cert_reqs=ssl.CERT_NONE)
+client=pymongo.MongoClient('mongodb+srv://ramnath1:ramnath1@cluster0.agxnajm.mongodb.net/',ssl=True)
 
 db = client['split_up']
 collection = db["bank statement"]
