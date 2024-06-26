@@ -39,7 +39,12 @@ class CardFactory:
                 card_names = self._card_name_pattern.findall(text)
                 # remove duplicates and empty string after filtering
                 card_names = list(set([s.lower() for s in card_names if s != ""]))
-                return card_names[0]
+                print(card_names)
+                if len(card_names) == 0:
+                    print("into if loop")
+                    return 'Unknown card', 400 
+                else:
+                    return card_names[0]
         else:
             print("File does not exist")
             return None

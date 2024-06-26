@@ -3,7 +3,7 @@ from PyPDF2 import PdfReader
 import re
 from dateutil.parser import parse
 from utils.csv_utils import csv_write
-from database import insert_data
+#from database import insert_data
 class AppleCard(CardInterface):
     
     def card_type(self):
@@ -13,6 +13,12 @@ class AppleCard(CardInterface):
         data=[]
         # Core logic for amex pdf file processing
         reader = PdfReader(pdf_file)
+        first_page = reader.pages[0]
+        first_text = first_page.extract_text()
+        match = re.search("Statement", first_text)
+        year=re.search(r"\b\d{4}\b", first_text[match.end():len(first_text)])
+        print("total content",first_text[match.end():match.end()+year.end()].replace("\n", ""))
+        
         for j in range(1,len(reader.pages)):
             page = reader.pages[j]
             text = page.extract_text()
@@ -23,21 +29,14 @@ class AppleCard(CardInterface):
                 for dates in date_patterns:
                     
                     if(txt[i+4][0]=='$'):
-                    
+                        print(txt[i+4])
                         # date=txt[0]
-                        lst={"Date":txt[i],"Details":txt[i+1],"Amount":txt[i+4],"Currency":"USD","Userid":userid,"Deleted":0,'FilenameUserId':file_name_pdf}
-                        print(lst)
+                        lst={"Date":txt[i],"Details":txt[i+1],"Amount":'$'+txt[i+4][1:len(txt[i+4])],"Currency":"USD","Userid":userid,"Deleted":0,'FilenameUserId':file_name_pdf}
                         # lst=[txt[i],txt[i+1],txt[i+4]]
                         data.append(lst)
-        print("date",data[0]['Date'])
-        date_lst=data[0]['Date'].split('/')
-        print(date_lst)
-        file_name = "apple"+date_lst[0]+'_'+date_lst[1]+'_'+date_lst[2]+".csv"
-        print(file_name)
-        csv_write(file_name,[["Date","Details","amount","Currency"]],'w')
-        csv_write(file_name,data,'a')
+        
 
         print("apple card")
-        insert_data(data,file_name_pdf)
+        data.append({"year":first_text[match.end():match.end()+year.end()].replace("\n", ""),"card_type":"Apple",'FilenameUserId':file_name_pdf,"Deleted":0})
+        #insert_data(data,file_name_pdf)
         return data
-        pass

@@ -4,8 +4,8 @@ sys.path.append("./factory")
 from bson import json_util
 from factory.card_factory import CardFactory
 import json
-from database import find
-from database import update
+#from database import find
+#from database import update
 from flask_cors import cross_origin
 from flask_cors import CORS
 
@@ -26,12 +26,15 @@ CORS(app)
 @app.route('/')
 def get():
     return "working"
-@app.route('/displayStatementTransaction', methods=['POST'])
+@app.route('/bankTransaction', methods=['POST'])
 def card():
     if 'file' not in request.files:
         return 'No file part in the request', 400
     
     file = request.files['file']
+    if not file.filename.lower().endswith('.pdf'):
+        return 'File is not a PDF', 400
+
     file.save("upload_file.pdf")
 
     userid=request.form['userid']
@@ -40,7 +43,9 @@ def card():
     file="upload_file.pdf"
     factory = CardFactory()
     card_type=factory.get_card_type(file)
-    print(card_type)
+    # if(card_type == 'discover' or card_type == 'amex' or card_type == 'apple'):
+    
+    print("card_type",card_type)
     if card_type is not None:
         card = factory.get_card(card_type)
         if card is not None:
@@ -49,55 +54,31 @@ def card():
             print("Card type %s is not supported.", card.card_type())
             sys.exit(-1)
         card.extract_table(file,userid,file_name)
-        final_data=find(file_name)
-        #print(final_data)
-        return json.loads(json_util.dumps(final_data))
+        print(card.extract_table(file,userid,file_name))
+        #final_data=find(file_name)
+        return json.loads(json_util.dumps(card.extract_table(file,userid,file_name)))
+    # else:
+    #     return 'Unknown card', 400
         # return jsonify(final_data)
 
-@cross_origin()
-@app.route('/deleteStatementTransaction',methods=['PUT'])
-def deleteStatementTransaction():
-    print('into this')
-    data=request.json
-    update(data['_id'])
-    # print(data)
-    return {"response":"Success"}
+# @cross_origin()
+# @app.route('/bankTransaction',methods=['PUT'])
+# def deleteStatementTransaction():
+#     data=request.json
+#     update(data['_id'])
+#     # print(data)
+#     return {"response":"Success"}
 
-@cross_origin()
-@app.route('/displayTransaction',methods=['POST'])
-def displayTransaction():
-    data=request.json
-    final_data=find(data['file_name'])
-    print(final_data)
-    return json.loads(json_util.dumps(final_data))
+# @cross_origin()
+# @app.route('/bankTransaction/<path:file_path>', methods=['GET'])
+# def displayTransaction(file_path):
+#     print("into the get call")
+#     print("file_path",file_path)
+#     final_data = find(file_path)
+#     print(final_data)
+#     return json.loads(json_util.dumps(final_data))
 
-    
+
 
 if __name__ == "__main__":
     app.run(debug=True)
-    #csv_extract_table=factory.get_extract_table(file)
-
-# import sys
-# from flask import Flask, jsonify
-# from factory.card_factory import CardFactory
-
-# app = Flask(__name__)
-
-# @app.route('/process_file', methods=['GET'])
-# def process_file():
-#     file = "/Users/ramnath/Desktop/projects/amex/Amex_Sep_14_-_Oct_13.pdf"
-
-#     factory = CardFactory()
-#     card_type = factory.get_card_type(file)
-#     if card_type is None:
-#         return jsonify({'error': 'Unsupported card type'})
-
-#     card = factory.get_card(card_type)
-#     if card is None:
-#         return jsonify({'error': 'Unsupported card type'})
-
-#     final_data = card.extract_table(file)
-#     return jsonify({'final_data': final_data})
-
-# if __name__ == "__main__":
-#     app.run(debug=True)
