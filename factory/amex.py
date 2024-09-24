@@ -1,11 +1,7 @@
 from card_interface import CardInterface
 from PyPDF2 import PdfReader
-import datefinder
 import re
-#from database import insert_data
-from dateutil.parser import parse
 from utils.csv_utils import csv_write
-import csv
 class Amex(CardInterface):
     def card_type(self):
         return "American Express"
@@ -13,9 +9,7 @@ class Amex(CardInterface):
     dollar_pattern_exp = re.compile(r'.*.\$\d{1,3}(?:,\d{3})*\.\d+', re.IGNORECASE)
     price_pattern_exp = re.compile(r'.\$\d{1,3}(?:,\d{3})*\.\d+', re.IGNORECASE)
     def extract_table(self, pdf_file,userid,file_name_pdf):
-        print("userid inside extract file",userid)
         data=[]
-        print(pdf_file)
         reader = PdfReader(pdf_file)
         # data.append({"year":first_text[match.end():match.end()+year.end()].replace("\n", ""),"card_type":"Amex",'FilenameUserId':file_name_pdf,"Deleted":0})
         for i in range(1,len(reader.pages)):
@@ -45,14 +39,12 @@ class Amex(CardInterface):
                             # data.append([date,detailed_text.replace("\n",""),final_price,"USD"])
             if "Total Fees forthis Period" in text:
                 break
-        date_lst=date.split('/')
-        print("date for amex",date)    
+        date_lst=date.split('/') 
         data.append({"year":date,"card_type":"Amex",'FilenameUserId':file_name_pdf,"Deleted":0})    
         file_name = "amex"+date_lst[0]+'_'+date_lst[1]+'_'+date_lst[2]+".csv"
         csv_write(file_name,[["Date","Details","Amount","Currency"]],'w')
         csv_write(file_name,data,'a')
         # data1=data
-        print(data)
         # insert_data(data,file_name_pdf)
         return data
                 

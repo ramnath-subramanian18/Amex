@@ -1,5 +1,3 @@
-import os
-import pdfplumber
 import re
 from amex import Amex
 from deserve import Deserve
@@ -33,21 +31,19 @@ class CardFactory:
     # read the first page of the pdf file
     # and identify which type of card
     def get_card_type(self, file):
-        print("file",file)
-        if os.path.exists(file) and os.path.isfile(file):
-            print("inside if")
-            with pdfplumber.open(file) as pdf_file:
-                print("into with")
-                text = pdf_file.pages[0].extract_text()
-                card_names = self._card_name_pattern.findall(text)
-                # remove duplicates and empty string after filtering
-                card_names = list(set([s.lower() for s in card_names if s != ""]))
-                print("card name",card_names)
-                if len(card_names) == 0:
-                    print("into if loop")
-                    return 'Unknown card', 400 
-                else:
-                    return card_names[0]
+        # if os.path.exists(file) and os.path.isfile(file):
+        #     print("inside if")
+        #     with pdfplumber.open(file) as pdf_file:
+        #         print("into with")
+        text = file
+        card_names = self._card_name_pattern.findall(text)
+        # remove duplicates and empty string after filtering
+        card_names = list(set([s.lower() for s in card_names if s != ""]))
+        if len(card_names) == 0:
+            print("into if loop")
+            return 'Unknown card', 400 
         else:
-            print("File does not exist")
-            return None
+            return card_names[0]
+        # else:
+        #     print("File does not exist")
+        #     return None

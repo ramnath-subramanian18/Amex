@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import os
 import csv
 from send_log_to_loggly import send_log_to_loggly
+import pdfplumber
 # Load environment variables from .env file
 load_dotenv(dotenv_path='/Users/ramnath/Desktop/projects/amex/.env')
 gpt_api_key = os.getenv('gpt_api_key')
@@ -30,8 +31,10 @@ log_token = os.getenv('log_token')
 app = Flask(__name__)
 CORS(app)
 @app.route('/')
+@cross_origin()
 def get():
     return "working"
+@cross_origin()
 @app.route('/bankTransaction', methods=['POST'])
 def card():
     try:
@@ -46,10 +49,11 @@ def card():
 
         userid=request.form['userid']
         file_name=request.form['fileName']+'_'+userid
-
+        with pdfplumber.open(file) as pdf_file:
+            first_page=(pdf_file.pages[0].extract_text())
         #file="upload_file.pdf"
         factory = CardFactory()
-        card_type=factory.get_card_type(file)
+        card_type=factory.get_card_type(first_page)
         # if(card_type == 'discover' or card_type == 'amex' or card_type == 'apple'):
         
         print("card_type",card_type)
@@ -61,7 +65,6 @@ def card():
                 print("Card type %s is not supported.", card.card_type())
                 sys.exit(-1)
             card.extract_table(file,userid,file_name)
-            print(card.extract_table(file,userid,file_name))
             #final_data=find(file_name)
             return json.loads(json_util.dumps(card.extract_table(file,userid,file_name)))
     except Exception as e:
@@ -94,7 +97,7 @@ def card():
 #     print(final_data)
 #     return json.loads(json_util.dumps(final_data))
 
-
+@cross_origin()
 @app.route('/classify', methods=['POST'])
 def classify():
     try:

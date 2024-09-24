@@ -38,7 +38,6 @@ for i in range(1,8):
                 else:
                     price_zero=price[0]
                     final_price=price_zero[1:len(price_zero)]
-                print(f"Date: {date}, Detailed_text: {detailed_text}, Price: {final_price}")
                 with open(file_name, mode='a', newline='') as file:
                     writer = csv.writer(file)
                     data=[[date,detailed_text.replace("\n",""),final_price,"USD"]]

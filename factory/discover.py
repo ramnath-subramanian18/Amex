@@ -1,12 +1,8 @@
 from card_interface import CardInterface
 from PyPDF2 import PdfReader
-import datefinder
 import re
-from dateutil.parser import parse
-#from database import insert_data
 from utils.csv_utils import csv_write
 from card_interface import CardInterface
-import csv
 class Discover(CardInterface):
     
     def card_type(self):
@@ -26,9 +22,6 @@ class Discover(CardInterface):
         pattern2="Late Payment Warning:"
         match_end_date = re.search(pattern2, text)
         data=[]
-        
-
-        print("dart",text[match_start_date.end():match_end_date.start()])
         re.search(pattern, text)
         match=self.year_detect_pattern.search(text)
         start_year=(match.group(0))[len(match.group(0))-17:len(match.group(0))-13]
