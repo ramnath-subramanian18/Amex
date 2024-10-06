@@ -37,45 +37,46 @@ def get():
 @cross_origin()
 @app.route('/bankTransaction', methods=['POST'])
 def card():
-    try:
-        if 'file' not in request.files:
-            return 'No file part in the request', 400
-        
-        file = request.files['file']
-        if not file.filename.lower().endswith('.pdf'):
-            return 'File is not a PDF', 400
+    #try:
+    if 'file' not in request.files:
+        return 'No file part in the request', 400
+    
+    file = request.files['file']
+    if not file.filename.lower().endswith('.pdf'):
+        return 'File is not a PDF', 400
 
-        #file.save("upload_file.pdf")
+    #file.save("upload_file.pdf")
 
-        userid=request.form['userid']
-        file_name=request.form['fileName']+'_'+userid
-        with pdfplumber.open(file) as pdf_file:
-            first_page=(pdf_file.pages[0].extract_text())
-        #file="upload_file.pdf"
-        factory = CardFactory()
-        card_type=factory.get_card_type(first_page)
-        # if(card_type == 'discover' or card_type == 'amex' or card_type == 'apple'):
-        
-        print("card_type",card_type)
-        if card_type is not None:
-            card = factory.get_card(card_type)
-            if card is not None:
-                print("Processing for Card type : %s " %(card.card_type()))
-            else:
-                print("Card type %s is not supported.", card.card_type())
-                sys.exit(-1)
-            card.extract_table(file,userid,file_name)
-            #final_data=find(file_name)
-            return json.loads(json_util.dumps(card.extract_table(file,userid,file_name)))
-    except Exception as e:
-        log_message = {
-            "timestamp": datetime.now().isoformat(),
-            "level": "ERROR",
-            "message": str(e),
-            "exception": repr(e)  # This gives a detailed description of the exception
-        }
-        send_log_to_loggly(log_token,log_message)
-        return jsonify({'error': str(e)}), 500
+    userid=request.form['userid']
+    file_name=request.form['fileName']+'_'+userid
+    with pdfplumber.open(file) as pdf_file:
+        #print(pdf_file.pages[2].extract_text())
+        first_page=(pdf_file.pages[1].extract_text())
+    #file="upload_file.pdf"
+    factory = CardFactory()
+    card_type=factory.get_card_type(first_page)
+    # if(card_type == 'discover' or card_type == 'amex' or card_type == 'apple'):
+    
+    print("card_type",card_type)
+    if card_type is not None:
+        card = factory.get_card(card_type)
+        if card is not None:
+            print("Processing for Card type : %s " %(card.card_type()))
+        else:
+            print("Card type %s is not supported.", card.card_type())
+            sys.exit(-1)
+        card.extract_table(file,userid,file_name)
+        #final_data=find(file_name)
+        return json.loads(json_util.dumps(card.extract_table(file,userid,file_name)))
+    # except Exception as e:
+    #     log_message = {
+    #         "timestamp": datetime.now().isoformat(),
+    #         "level": "ERROR",
+    #         "message": str(e),
+    #         "exception": repr(e)  # This gives a detailed description of the exception
+    #     }
+    #     send_log_to_loggly(log_token,log_message)
+    #     return jsonify({'error': str(e)}), 500
     # else:
     #     return 'Unknown card', 400
         # return jsonify(final_data)
